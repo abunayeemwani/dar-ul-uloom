@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-green: #14532D;
+    --emerald-green: #166534;
+    --warm-bg: #FAFAF5;
+    --muted-gold: #C5A45A;
+    --dark-charcoal: #252525;
+}
+
+body {
+    background-color: var(--warm-bg);
+    color: var(--dark-charcoal);
+    font-family: 'Inter', sans-serif;
+}
+
+.arabic-text {
+    font-family: 'Amiri', serif;
+}
+
+/* Subtle Islamic Star Lattice SVG Pattern */
+.islamic-pattern {
+    background-color: #14532D;
+    background-image: radial-gradient(#C5A45A 0.75px, transparent 0.75px), radial-gradient(#C5A45A 0.75px, #14532D 0.75px);
+    background-size: 30px 30px;
+    background-position: 0 0, 15px 15px;
+}
+
+/* Subtle Arch styling */
+.arch-card {
+    border-top-left-radius: 4rem;
+    border-top-right-radius: 4rem;
+}

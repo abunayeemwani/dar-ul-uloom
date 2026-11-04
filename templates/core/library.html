@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-islamic-dark text-white py-10">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <h1 class="font-serif text-3xl font-bold mb-1">Al-Maktaba (Institutional Digital Library)</h1>
+        <p class="text-xs md:text-sm text-emerald-100">Curated Classical Books, Tafaseer, Hadith & Reference Works Available for Study</p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Filter & Search Bar -->
+    <form method="GET" class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm mb-8 flex flex-col md:flex-row gap-4 justify-between items-center">
+        <div class="flex flex-wrap gap-2">
+            <a href="{% url 'library' %}" class="px-3 py-1.5 rounded-lg text-xs font-semibold {% if not selected_category %}bg-islamic-dark text-white{% else %}bg-gray-100 text-gray-700{% endif %}">All Disciplines</a>
+            {% for code, label in categories %}
+            <a href="?category={{ code }}{% if query %}&q={{ query }}{% endif %}" class="px-3 py-1.5 rounded-lg text-xs font-semibold {% if selected_category == code %}bg-islamic-dark text-white{% else %}bg-gray-100 text-gray-700{% endif %}">
+                {{ label }}
+            </a>
+            {% endfor %}
+        </div>
+        <div class="w-full md:w-72 flex gap-2">
+            <input type="text" name="q" value="{{ query }}" placeholder="Search title or musannif (author)..." class="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg">
+            <button type="submit" class="bg-islamic-dark text-white text-xs px-4 py-1.5 rounded-lg hover:bg-islamic-emerald">Search</button>
+        </div>
+    </form>
+
+    <!-- Books Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for book in books %}
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex flex-col justify-between hover:border-islamic-gold/60 transition">
+            <div>
+                <div class="flex justify-between items-start mb-2">
+                    <span class="inline-block bg-emerald-50 text-islamic-dark text-[10px] uppercase font-bold px-2 py-0.5 rounded">
+                        {{ book.get_category_display }}
+                    </span>
+                    {% if book.pdf_file %}
+                    <span class="inline-flex items-center gap-1 text-[10px] bg-amber-50 text-amber-800 border border-amber-200 px-1.5 py-0.5 rounded font-semibold">
+                        PDF ({{ book.file_size_mb }} MB)
+                    </span>
+                    {% endif %}
+                </div>
+
+                <h3 class="font-serif font-bold text-base text-islamic-dark leading-snug">{{ book.title }}</h3>
+                <p class="text-xs text-islamic-gold font-medium mb-2">Musannif: {{ book.author }}</p>
+                
+                {% if book.description %}
+                <p class="text-xs text-gray-600 line-clamp-3 mb-4 leading-relaxed">{{ book.description }}</p>
+                {% endif %}
+            </div>
+
+            <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs">
+                <span class="text-gray-400 text-[11px]">Vols: {{ book.volumes }}</span>
+                
+                {% if book.pdf_file %}
+                <div class="flex items-center gap-2">
+                    <a href="{% url 'book_read' book.id %}" target="_blank" class="text-gray-600 hover:text-islamic-dark font-medium underline text-[11px]" title="Read inside browser">
+                        Read
+                    </a>
+                    <a href="{% url 'book_download' book.id %}" class="bg-islamic-dark hover:bg-islamic-emerald text-white px-2.5 py-1 rounded text-[11px] font-semibold flex items-center gap-1 shadow-sm transition">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Download
+                    </a>
+                </div>
+                {% else %}
+                <span class="text-gray-400 italic text-[11px]">Campus Print Only</span>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full py-12 text-center text-sm text-gray-500">No books cataloged in this classification.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

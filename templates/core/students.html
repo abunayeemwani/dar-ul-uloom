@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-islamic-dark text-white py-10">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <h1 class="font-serif text-3xl font-bold mb-1">Student Enrollment Registry</h1>
+        <p class="text-xs md:text-sm text-emerald-100">Enrolled Students in Tahfeez & Academic Wings</p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Filter -->
+    <form method="GET" class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
+        <div class="flex flex-wrap gap-2">
+            <a href="{% url 'students' %}" class="px-3 py-1.5 rounded-lg text-xs font-semibold {% if not selected_class %}bg-islamic-dark text-white{% else %}bg-gray-100 text-gray-700{% endif %}">All Levels</a>
+            {% for code, label in classes %}
+            <a href="?class={{ code }}{% if query %}&q={{ query }}{% endif %}" class="px-3 py-1.5 rounded-lg text-xs font-semibold {% if selected_class == code %}bg-islamic-dark text-white{% else %}bg-gray-100 text-gray-700{% endif %}">
+                {{ label }}
+            </a>
+            {% endfor %}
+        </div>
+        <div class="w-full md:w-72 flex gap-2">
+            <input type="text" name="q" value="{{ query }}" placeholder="Search Reg No or Name..." class="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg">
+            <button type="submit" class="bg-islamic-dark text-white text-xs px-4 py-1.5 rounded-lg">Search</button>
+        </div>
+    </form>
+
+    <!-- Table Format -->
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-emerald-50 text-islamic-dark uppercase tracking-wider font-semibold border-b border-gray-200">
+                    <tr>
+                        <th class="p-3.5">Reg. ID</th>
+                        <th class="p-3.5">Student Name</th>
+                        <th class="p-3.5">Parentage</th>
+                        <th class="p-3.5">Class / Academic Division</th>
+                        <th class="p-3.5">Batch</th>
+                        <th class="p-3.5">Residence</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for student in students %}
+                    <tr class="hover:bg-amber-50/40">
+                        <td class="p-3.5 font-mono font-bold text-islamic-dark">{{ student.registration_no }}</td>
+                        <td class="p-3.5 font-medium text-gray-900">{{ student.name }}</td>
+                        <td class="p-3.5 text-gray-600">{{ student.parentage }}</td>
+                        <td class="p-3.5"><span class="bg-emerald-100 text-islamic-dark px-2 py-0.5 rounded font-medium">{{ student.get_current_class_display }}</span></td>
+                        <td class="p-3.5 text-gray-600">{{ student.admission_year }}</td>
+                        <td class="p-3.5 text-gray-500">{{ student.district }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="p-8 text-center text-gray-500">No active students registered under this query.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

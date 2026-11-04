@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-islamic-dark text-white py-10">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <h1 class="font-serif text-3xl font-bold mb-1">Ijtimat, Dastarbandi & Events</h1>
+        <p class="text-xs md:text-sm text-emerald-100">Annual Islamic Conferences, Dastarbandi & Islah Gatherings</p>
+    </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="flex justify-center gap-4 mb-8">
+        <a href="?status=UPCOMING" class="px-4 py-2 rounded-lg text-xs font-semibold {% if selected_status == 'UPCOMING' %}bg-islamic-dark text-white{% else %}bg-white border text-gray-700{% endif %}">Upcoming Ijtimat</a>
+        <a href="?status=COMPLETED" class="px-4 py-2 rounded-lg text-xs font-semibold {% if selected_status == 'COMPLETED' %}bg-islamic-dark text-white{% else %}bg-white border text-gray-700{% endif %}">Past Gatherings</a>
+    </div>
+
+    <div class="space-y-6">
+        {% for event in events %}
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 flex flex-col md:flex-row gap-6 justify-between items-start">
+            <div class="flex-grow">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="bg-emerald-100 text-islamic-dark text-xs px-2.5 py-0.5 rounded font-bold">
+                        {{ event.date_and_time|date:"l, F d, Y - h:i A" }}
+                    </span>
+                    <span class="text-xs text-gray-500">📍 {{ event.venue }}</span>
+                </div>
+                <h2 class="text-xl font-bold text-islamic-dark mb-2">{{ event.title }}</h2>
+                {% if event.speaker_or_guest %}
+                <p class="text-xs font-medium text-islamic-gold mb-3">Distinguished Guest / Khateeb: {{ event.speaker_or_guest }}</p>
+                {% endif %}
+                <p class="text-xs text-gray-600 leading-relaxed mb-4">{{ event.description|truncatewords:45 }}</p>
+                <a href="{% url 'ijtimat_detail' event.slug %}" class="text-xs font-bold text-islamic-dark hover:text-islamic-gold">Read Full Schedule & Details →</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-12 text-sm text-gray-500">No events currently scheduled under this listing.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

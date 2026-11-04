@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-12">
+    <a href="{% url 'ijtimat' %}" class="text-xs text-islamic-dark font-semibold hover:underline mb-4 inline-block">← Back to All Gatherings</a>
+    
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
+        <span class="bg-emerald-100 text-islamic-dark text-xs px-3 py-1 rounded font-bold uppercase tracking-wider inline-block mb-3">
+            {{ event.get_status_display }}
+        </span>
+        <h1 class="text-2xl md:text-3xl font-serif font-bold text-islamic-dark mb-3">{{ event.title }}</h1>
+        
+        <div class="bg-gray-50 p-4 rounded-lg text-xs space-y-1 text-gray-700 mb-6 border border-gray-100">
+            <p><strong>Date & Time:</strong> {{ event.date_and_time|date:"l, F d, Y at h:i A" }}</p>
+            <p><strong>Venue:</strong> {{ event.venue }}</p>
+            {% if event.speaker_or_guest %}<p><strong>Presided By:</strong> {{ event.speaker_or_guest }}</p>{% endif %}
+        </div>
+
+        <div class="text-sm text-gray-700 leading-relaxed space-y-4 whitespace-pre-line border-t border-gray-100 pt-6">
+            {{ event.description }}
+        </div>
+    </div>
+</div>
+{% endblock %}

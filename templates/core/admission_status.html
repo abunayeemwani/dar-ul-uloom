@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-islamic-dark text-white py-10">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+        <h1 class="font-serif text-3xl font-bold mb-1">Track Online Admission Status</h1>
+        <p class="text-xs md:text-sm text-emerald-100">Check test interview scheduling and review status using your Application Tracking ID</p>
+    </div>
+</div>
+
+<div class="max-w-2xl mx-auto px-4 py-12">
+    <!-- Search Form -->
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-8 text-center">
+        <form method="GET" class="flex gap-2">
+            <input type="text" name="ref_id" value="{{ ref_id }}" required placeholder="e.g. ADM-2026-XXXX" class="flex-grow px-4 py-2 text-xs border border-gray-300 rounded-lg uppercase font-mono focus:outline-none focus:border-islamic-dark">
+            <button type="submit" class="bg-islamic-dark hover:bg-islamic-emerald text-white text-xs font-bold px-6 py-2 rounded-lg transition">
+                Check Status
+            </button>
+        </form>
+    </div>
+
+    {% if searched %}
+        {% if application %}
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 relative">
+            <div class="flex justify-between items-center border-b pb-4 mb-4">
+                <div>
+                    <h2 class="font-serif font-bold text-lg text-islamic-dark">{{ application.student_name }}</h2>
+                    <p class="text-xs text-gray-500 font-mono">{{ application.reference_id }}</p>
+                </div>
+                <span class="px-3 py-1 rounded-full text-xs font-bold 
+                    {% if application.status == 'ACCEPTED' %}bg-green-100 text-green-800
+                    {% elif application.status == 'INTERVIEW_SCHEDULED' %}bg-blue-100 text-blue-800
+                    {% elif application.status == 'REJECTED' %}bg-red-100 text-red-800
+                    {% else %}bg-amber-100 text-amber-800{% endif %}">
+                    {{ application.get_status_display }}
+                </span>
+            </div>
+
+            <div class="space-y-3 text-xs text-gray-700">
+                <div class="grid grid-cols-2 gap-2">
+                    <div><strong>Father / Guardian:</strong> {{ application.father_name }}</div>
+                    <div><strong>Chosen Wing:</strong> {{ application.get_preferred_course_display }}</div>
+                    <div><strong>Residence Option:</strong> {{ application.get_residence_type_display }}</div>
+                    <div><strong>Date Applied:</strong> {{ application.application_date|date:"d M Y" }}</div>
+                </div>
+
+                {% if application.status == 'UNDER_REVIEW' %}
+                <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl text-blue-900">
+                    <p class="font-bold text-sm mb-1">Your application is currently under review.</p>
+                    <p class="text-xs">The admission committee is reviewing your application and verifying the submitted details. You will be notified once the review process is complete.</p>
+                    <p class="text-xs mt-1">Thank you for your patience and cooperation.</p>
+                    <p class="text-[11px] text-blue-800 italic mt-2">JazakAllah Khair! 🌙</p>
+                </div>
+                {% endif %}
+
+                {% if application.interview_date and application.status == 'INTERVIEW_SCHEDULED' %}
+                <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl text-blue-900">
+                    <p class="font-bold text-sm mb-1">📅 Scheduled Interview & Written/Oral Test:</p>
+                    <p class="text-xs"><strong>Date & Time:</strong> {{ application.interview_date|date:"l, F d, Y at h:i A" }}</p>
+                    <p class="text-xs mt-1"><strong>Venue:</strong> Academic Office, Darul Uloom Campus, Achagoza, Pulwama.</p>
+                    <p class="text-[11px] text-blue-800 italic mt-2">Please bring original Aadhaar / Birth Certificate and previous marksheets.</p>
+                </div>
+                {% endif %}
+
+                {% if application.status == 'ACCEPTED' %}
+                <div class="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl text-green-900">
+                    <p class="font-bold text-sm mb-1">Congratulations! Your admission has been successfully confirmed.</p>
+                    <p class="text-xs">Your application has been accepted, and your admission to Darul Uloom Sabeel Ul Rasool is complete.</p>
+                    <p class="text-xs mt-1">We warmly welcome you to our institution and wish you success in your educational journey.</p>
+                    <p class="text-[11px] text-blue-800 italic mt-2">JazakAllah Khair! 🌙</p>
+                </div>
+                {% endif %}
+
+                {% if application.status == 'REJECTED' %}
+                <div class="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-900">
+                    <p class="font-bold text-sm mb-1">We regret to inform you that your admission application has not been accepted.</p>
+                    <p class="text-xs">Unfortunately, your application has been declined by the admission committee.</p>
+                    <p class="text-xs mt-1">Thank you for your interest in Darul Uloom Sabeel Ul Rasool. We appreciate your time and wish you success in your future endeavours.</p>
+                    <p class="text-[11px] text-blue-800 italic mt-2">JazakAllah Khair! 🌙</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <div class="bg-red-50 text-red-700 p-6 rounded-xl border border-red-200 text-center text-xs">
+            No application record found matching reference ID "<strong>{{ ref_id }}</strong>". Please ensure the code is typed correctly as given on your confirmation receipt.
+        </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

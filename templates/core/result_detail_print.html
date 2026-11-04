@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Marksheet - {{ result.student.registration_no }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print { display: none; }
+            body { background: white; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 p-6">
+    <div class="no-print max-w-2xl mx-auto mb-4 flex justify-between items-center">
+        <a href="{% url 'results' %}" class="text-xs text-emerald-800 font-semibold hover:underline">← Back to Results Portal</a>
+        <button onclick="window.print()" class="bg-emerald-800 text-white text-xs px-4 py-2 rounded font-bold shadow">Print Official Marksheet</button>
+    </div>
+
+    <!-- Marksheet Card -->
+    <div class="max-w-2xl mx-auto bg-white p-10 border-4 border-emerald-900 shadow-lg relative">
+        <div class="text-center border-b-2 border-emerald-900 pb-4 mb-6">
+            <h1 class="text-xl font-bold uppercase tracking-wider text-emerald-900">Darul Uloom Sabeel Ul Rasool</h1>
+            <p class="text-xs text-gray-600">Achagoza, Pulwama, Jammu & Kashmir - 192301</p>
+            <p class="text-xs font-serif italic text-amber-700 mt-1">Examination Branch • Kashf-ud-Darajat (Provisional Marksheet)</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 text-xs mb-6">
+            <div><strong>Student Name:</strong> {{ result.student.name }}</div>
+            <div><strong>Reg. Number:</strong> {{ result.student.registration_no }}</div>
+            <div><strong>Parentage:</strong> {{ result.student.parentage }}</div>
+            <div><strong>Academic Session:</strong> {{ result.academic_year }}</div>
+            <div><strong>Class / Tier:</strong> {{ result.class_name }}</div>
+            <div><strong>Examination:</strong> {{ result.examination_name }}</div>
+        </div>
+
+        <table class="w-full text-xs text-left mb-6 border border-gray-300">
+            <thead class="bg-gray-100 border-b border-gray-300">
+                <tr>
+                    <th class="p-2 border-r">Paper / Subject</th>
+                    <th class="p-2 text-center border-r">Max Marks</th>
+                    <th class="p-2 text-right">Marks Secured</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in result.breakdowns.all %}
+                <tr class="border-b border-gray-200">
+                    <td class="p-2 border-r">{{ item.subject_name }}</td>
+                    <td class="p-2 text-center border-r">{{ item.max_marks }}</td>
+                    <td class="p-2 text-right font-semibold">{{ item.obtained_marks }}</td>
+                </tr>
+                {% endfor %}
+                <tr class="font-bold bg-gray-50 border-t-2 border-gray-400">
+                    <td class="p-2 border-r">Grand Total</td>
+                    <td class="p-2 text-center border-r">{{ result.total_marks }}</td>
+                    <td class="p-2 text-right">{{ result.marks_obtained }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="grid grid-cols-2 gap-4 text-xs mb-10">
+            <div><strong>Percentage:</strong> {{ result.percentage }}%</div>
+            <div><strong>Final Standing:</strong> {{ result.get_status_display }}</div>
+        </div>
+
+        <div class="flex justify-between items-end pt-12 text-[11px] text-gray-600">
+            <div class="text-center">
+                <div class="w-32 border-b border-gray-400 mx-auto mb-1"></div>
+                <span>Prepared By</span>
+            </div>
+            <div class="text-center">
+                <div class="w-32 border-b border-gray-400 mx-auto mb-1"></div>
+                <span>Nazim-e-Imtihanat (Controller)</span>
+            </div>
+            <div class="text-center">
+                <div class="w-32 border-b border-gray-400 mx-auto mb-1"></div>
+                <span>Principal / Muhtamim</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

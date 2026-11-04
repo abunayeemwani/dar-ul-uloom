@@ -1,0 +1,142 @@
+[
+  {
+    "model": "core.announcement",
+    "pk": 1,
+    "fields": {
+      "title": "Admissions Open for Tahfeez & Dars-e-Nizami",
+      "content": "Admissions are formally open for academic year 1446-47 AH at Achagoza campus. Interested guardians may visit the office.",
+      "date_posted": "2026-03-01",
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.member",
+    "pk": 1,
+    "fields": {
+      "name": "Hazrat Maulana Mufti Muhammad Shafi (Qasmi)",
+      "designation": "Head Muhtamim & Shaykh-ul-Hadith",
+      "category": "ADMIN",
+      "contact_phone": "",
+      "contact_email": ""
+    }
+  },
+  {
+    "model": "core.member",
+    "pk": 2,
+    "fields": {
+      "name": "Qari Abdul Rasheed",
+      "designation": "Head of Qiraat & Tahfeez",
+      "category": "FACULTY",
+      "contact_phone": "",
+      "contact_email": ""
+    }
+  },
+  {
+    "model": "core.student",
+    "pk": 1,
+    "fields": {
+      "registration_no": "SR-2024-001",
+      "name": "Zubair Ahmad Dar",
+      "parentage": "Ghulam Hassan Dar",
+      "current_class": "DAWRA",
+      "admission_year": 2021,
+      "district": "Pulwama",
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.student",
+    "pk": 2,
+    "fields": {
+      "registration_no": "SR-2024-002",
+      "name": "Owais Nabi Lone",
+      "parentage": "Ghulam Nabi Lone",
+      "current_class": "HIFZ",
+      "admission_year": 2023,
+      "district": "Shopian",
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.alumni",
+    "pk": 1,
+    "fields": {
+      "name": "Maulana Tariq Ahmad Bhat",
+      "completion_year": 2022,
+      "current_engagement": "Imam & Khateeb, Jamea Masjid",
+      "native_place": "Pulwama"
+    }
+  },
+  {
+    "model": "core.book",
+    "pk": 1,
+    "fields": {
+      "title": "Sahih al-Bukhari with Hashiyah",
+      "author": "Imam Muhammad ibn Ismail al-Bukhari (RA)",
+      "category": "HADITH",
+      "accession_no": "LIB-HAD-01",
+      "volumes": 2,
+      "description": "Foundational text of Hadith studies studied during the final Dawra year.",
+      "has_digital_copy": true
+    }
+  },
+  {
+    "model": "core.academicresult",
+    "pk": 1,
+    "fields": {
+      "student": 1,
+      "academic_year": "1445-1446 AH (2024-25)",
+      "examination_name": "Annual Imtihan-e-Aam",
+      "class_name": "Dawra-e-Hadith",
+      "total_marks": 500,
+      "marks_obtained": 462,
+      "percentage": "92.40",
+      "status": "MUMTAZ",
+      "remarks": "Exceptional proficiency in Hadith Sanad and Fiqh texts.",
+      "issue_date": "2025-04-10"
+    }
+  },
+  {
+    "model": "core.resultsubjectbreakdown",
+    "pk": 1,
+    "fields": {
+      "result": 1,
+      "subject_name": "Sahih al-Bukhari (Jild 1 & 2)",
+      "max_marks": 100,
+      "obtained_marks": 94
+    }
+  },
+  {
+    "model": "core.resultsubjectbreakdown",
+    "pk": 2,
+    "fields": {
+      "result": 1,
+      "subject_name": "Sahih Muslim",
+      "max_marks": 100,
+      "obtained_marks": 91
+    }
+  },
+  {
+    "model": "core.resultsubjectbreakdown",
+    "pk": 3,
+    "fields": {
+      "result": 1,
+      "subject_name": "Sunan at-Tirmidhi & Abu Dawood",
+      "max_marks": 100,
+      "obtained_marks": 93
+    }
+  },
+  {
+    "model": "core.ijtima",
+    "pk": 1,
+    "fields": {
+      "title": "Annual Khatm-e-Bukhari & Dastarbandi Conference",
+      "slug": "annual-khatm-bukhari-2026",
+      "date_and_time": "2026-05-15T10:00:00Z",
+      "venue": "Campus Grounds, Achagoza, Pulwama",
+      "speaker_or_guest": "Invited Scholars & Shura Council",
+      "description": "Graduation ceremony for the Huffaz and Dars-e-Nizami graduates. All patrons and parents are invited.",
+      "status": "UPCOMING"
+    }
+  }
+]
