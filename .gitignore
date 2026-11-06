@@ -1,7 +1,9 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
+# Match __pycache__ directory anywhere in the project tree
+**/__pycache__/
+
+# Match compiled Python bytecode anywhere in the project tree
+**/*.py[cod]
+**/*$py.class
 
 # C extensions
 *.so
@@ -39,6 +41,12 @@ venv.bak/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+
+# Media files (user uploads: student photos, PDFs, gallery images)
+media/
+
+# Static collection destination
+staticfiles/
 
 # Environment variables & secrets
 .env
