@@ -1,5 +1,7 @@
 import uuid
 import os
+import re
+from decimal import Decimal
 from django.db import models
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -267,3 +269,173 @@ class AdmissionApplication(models.Model):
 
     def __str__(self):
         return f"{self.reference_id} - {self.student_name} ({self.get_preferred_course_display()})"
+
+
+class GalleryItem(models.Model):
+    MEDIA_TYPE_CHOICES = [
+        ('IMAGE', 'Photograph / Image'),
+        ('VIDEO', 'Video (YouTube / Direct URL)'),
+    ]
+
+    title = models.CharField(max_length=200)
+    media_type = models.CharField(max_length=10, choices=MEDIA_TYPE_CHOICES, default='IMAGE')
+    
+    # For Images
+    image_file = models.ImageField(upload_to='gallery/images/', blank=True, null=True)
+    
+    # For Videos (YouTube link or direct MP4/video link)
+    video_url = models.URLField(
+        blank=True,
+        null=True,
+        help_text="Paste YouTube video link (e.g., https://www.youtube.com/watch?v=... or https://youtu.be/...)"
+    )
+    # Optional custom cover/thumbnail for video
+    thumbnail = models.ImageField(upload_to='gallery/thumbnails/', blank=True, null=True)
+    
+    caption = models.TextField(blank=True, help_text="Short description or context of the photo/video.")
+    date_captured = models.DateField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_featured = models.BooleanField(default=False, help_text="Highlight in top section")
+
+    class Meta:
+        ordering = ['-date_captured', '-created_at']
+
+    def __str__(self):
+        return f"{self.title} ({self.get_media_type_display()})"
+
+    @property
+    def youtube_embed_id(self):
+        """Extracts the YouTube video ID from various link formats."""
+        if not self.video_url:
+            return None
+        pattern = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})'
+        match = re.search(pattern, self.video_url)
+        return match.group(1) if match else None
+
+
+def validate_pdf_sheet(value):
+    """Enforces that the uploaded audit statement is strictly a PDF file."""
+    ext = os.path.splitext(value.name)[1].lower()
+    if ext != '.pdf':
+        raise ValidationError('Only PDF audit reports (.pdf) are allowed. Excel/CSV files are not accepted.')
+
+
+class FinancialYear(models.Model):
+    year_label = models.CharField(
+        max_length=50,
+        unique=True,
+        help_text="e.g. 2025-2026"
+    )
+    start_date = models.DateField()
+    end_date = models.DateField()
+    
+    opening_balance = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal('0.00'),
+        verbose_name="Previous Year Balance (Opening Balance)"
+    )
+    manual_total_income = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Leave blank to calculate automatically from line items below."
+    )
+    manual_total_expenditure = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Leave blank to calculate automatically from line items below."
+    )
+    
+    # Strictly PDF Audit Report
+    audit_sheet = models.FileField(
+        upload_to='accounts/pdf_reports/',
+        blank=True,
+        null=True,
+        validators=[validate_pdf_sheet],
+        help_text="Upload the certified annual financial audit report strictly in PDF format."
+    )
+    auditor_or_accountant = models.CharField(
+        max_length=150,
+        blank=True,
+        default="Majlis-e-Shura Audit Committee",
+        help_text="Certified by Chartered Accountant or Shura Finance Committee"
+    )
+    remarks = models.TextField(blank=True, help_text="Institutional notes or financial audit remarks.")
+    is_published = models.BooleanField(default=True, help_text="Show publicly on website")
+
+    class Meta:
+        ordering = ['-start_date']
+        verbose_name = "Financial Year & Accounts Summary"
+        verbose_name_plural = "Financial Years & Accounts"
+
+    def __str__(self):
+        return self.year_label
+
+    @property
+    def total_income(self):
+        if self.manual_total_income is not None:
+            return self.manual_total_income
+        aggregate = self.entries.filter(entry_type='INCOME').aggregate(models.Sum('amount'))['amount__sum']
+        return aggregate or Decimal('0.00')
+
+    @property
+    def total_expenditure(self):
+        if self.manual_total_expenditure is not None:
+            return self.manual_total_expenditure
+        aggregate = self.entries.filter(entry_type='EXPENSE').aggregate(models.Sum('amount'))['amount__sum']
+        return aggregate or Decimal('0.00')
+
+    @property
+    def closing_balance(self):
+        return (self.opening_balance + self.total_income) - self.total_expenditure
+
+    @property
+    def audit_sheet_filename(self):
+        if self.audit_sheet:
+            return os.path.basename(self.audit_sheet.name)
+        return ""
+
+
+class IncomeExpenseEntry(models.Model):
+    ENTRY_TYPES = [
+        ('INCOME', 'Income (Aamadani / Zakat / Atiyaat)'),
+        ('EXPENSE', 'Expenditure (Kharch / Matbakh / Asatizah)'),
+    ]
+
+    CATEGORY_CHOICES = [
+        # Income categories
+        ('ZAKAT', 'Zakat & Imdaad'),
+        ('SADAQAH', 'Sadaqaat & Atiyaat-e-Aam'),
+        ('CONSTRUCTION_FUND', 'Tameer-e-Madrasa (Building Construction Fund)'),
+        ('FITRA_SKIN', 'Sadqat-ul-Fitr & Qurbani Skins'),
+        ('DONATION_MONTHLY', 'Monthly Community Contributions (Mahana Chandajat)'),
+        ('OTHER_INCOME', 'Other Educational Grants / Receipts'),
+
+        # Expense categories
+        ('HONORARIUM', 'Asatizah & Staff Honorarium (Mahanah Tankhwah)'),
+        ('KITCHEN_MESS', 'Matbakh & Hostel Mess (Boarding Food & Rations)'),
+        ('CAMPUS_MAINTENANCE', 'Building Maintenance, Power & Water Supply'),
+        ('STUDENT_WELFARE', 'Student Books, Uniforms & Medical Care (Imdad-e-Talaba)'),
+        ('EVENT_EXPENSE', 'Annual Dastarbandi & Conference Expenses'),
+        ('OFFICE_ADMIN', 'Stationery, Printing & Office Expenses'),
+        ('OTHER_EXPENSE', 'Other Institutional Contingencies'),
+    ]
+
+    financial_year = models.ForeignKey(FinancialYear, on_delete=models.CASCADE, related_name='entries')
+    entry_type = models.CharField(max_length=10, choices=ENTRY_TYPES)
+    category = models.CharField(max_length=30, choices=CATEGORY_CHOICES)
+    head_title = models.CharField(max_length=200, blank=True, help_text="e.g. 'Ration & Provisions for Matbakh'")
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    notes = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        ordering = ['entry_type', '-amount']
+        verbose_name = "Detailed Ledger Entry"
+        verbose_name_plural = "Detailed Ledger Entries"
+
+    def __str__(self):
+        return f"{self.get_entry_type_display()} - {self.head_title}: ₹{self.amount}"

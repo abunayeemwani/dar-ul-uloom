@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Header Banner -->
+<div class="bg-islamic-dark text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <span class="arabic-text text-xl text-islamic-gold block mb-1">مَعْرِضُ الصُّوَرِ وَالْمَرْئِيَّاتِ</span>
+        <h1 class="font-serif text-3xl md:text-4xl font-bold mb-2">Campus Gallery & Media Archive</h1>
+        <p class="text-xs md:text-sm text-emerald-100">Photographs and recordings of Dastarbandi Jalsas, campus life, academic seminars, and Quranic gatherings</p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Filter Section -->
+    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <!-- Media Type Filter -->
+        <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider mr-1">Type:</span>
+            <a href="" class="px-3 py-1.5 rounded-lg text-xs font-semibold {% if not media_type %}bg-islamic-dark text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                All Media
+            </a>
+            <a href="?type=IMAGE" class="px-3 py-1.5 rounded-lg text-xs font-semibold {% if media_type == 'IMAGE' %}bg-islamic-dark text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                📷 Photos
+            </a>
+            <a href="?type=VIDEO" class="px-3 py-1.5 rounded-lg text-xs font-semibold {% if media_type == 'VIDEO' %}bg-islamic-dark text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                🎥 Videos
+            </a>
+        </div>
+    </div>
+
+    <!-- Media Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for item in items %}
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col group hover:shadow-md hover:border-islamic-gold transition">
+            
+            <!-- Media Container -->
+            <div class="relative h-48 bg-gray-100 overflow-hidden cursor-pointer" 
+                 onclick="openMediaModal('{{ item.media_type }}', '{% if item.media_type == 'IMAGE' and item.image_file %}{{ item.image_file.url }}{% elif item.media_type == 'VIDEO' %}{{ item.youtube_embed_id }}{% endif %}', '{% if item.is_direct_video %}direct{% elif item.youtube_embed_id %}youtube{% else %}none{% endif %}', '{{ item.title|escapejs }}', '{{ item.caption|escapejs }}')">
+                
+                {% if item.media_type == 'IMAGE' %}
+                    {% if item.image_file %}
+                        <img src="{{ item.image_file.url }}" alt="{{ item.title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">No image uploaded</div>
+                    {% endif %}
+                    <span class="absolute top-2 right-2 bg-islamic-dark/80 text-white text-[10px] font-bold px-2 py-0.5 rounded backdrop-blur">
+                        📷 Photo
+                    </span>
+                {% elif item.media_type == 'VIDEO' %}
+                    {% if item.thumbnail %}
+                        <img src="{{ item.thumbnail.url }}" alt="{{ item.title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    {% elif item.youtube_embed_id %}
+                        <img src="https://img.youtube.com/vi/{{ item.youtube_embed_id }}/hqdefault.jpg" alt="{{ item.title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    {% else %}
+                        <div class="w-full h-full bg-gray-800 flex items-center justify-center text-white text-xs">Video Link</div>
+                    {% endif %}
+                    
+                    <!-- Play Icon Overlay -->
+                    <div class="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/40 transition">
+                        <div class="w-12 h-12 rounded-full bg-white/90 text-red-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+                            <svg class="w-6 h-6 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
+                    </div>
+                    <span class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">
+                        ▶ Video
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- Card Info -->
+            <div class="p-4 flex-grow flex flex-col justify-between">
+                <div>
+                    <h3 class="font-bold text-sm text-islamic-dark mb-1 leading-snug line-clamp-1">{{ item.title }}</h3>
+                    {% if item.caption %}
+                    <p class="text-xs text-gray-500 line-clamp-2 leading-relaxed mb-2">{{ item.caption }}</p>
+                    {% endif %}
+                </div>
+                <div class="pt-2 border-t border-gray-100 flex justify-between items-center text-[11px] text-gray-400">
+                    <span>{{ item.date_captured|date:"M d, Y" }}</span>
+                    <button class="text-islamic-dark font-semibold hover:text-islamic-gold" 
+                            onclick="openMediaModal('{{ item.media_type }}', '{% if item.media_type == 'IMAGE' and item.image_file %}{{ item.image_file.url }}{% elif item.media_type == 'VIDEO' %}{{ item.youtube_embed_id }}{% endif %}', '{% if item.is_direct_video %}direct{% elif item.youtube_embed_id %}youtube{% else %}none{% endif %}', '{{ item.title|escapejs }}', '{{ item.caption|escapejs }}')">
+                        View
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full py-16 text-center text-sm text-gray-500">
+            No media items cataloged under this criteria. Check back soon for updates.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal / Lightbox Overlay -->
+<div id="mediaModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl relative">
+        <button onclick="closeMediaModal()" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center transition">
+            ✕
+        </button>
+        <div id="modalBody" class="w-full bg-black flex items-center justify-center min-h-[300px]">
+            <!-- Dynamic Content Loaded via JS -->
+        </div>
+        <div class="p-5 bg-white">
+            <h3 id="modalTitle" class="font-serif font-bold text-lg text-islamic-dark"></h3>
+            <p id="modalCaption" class="text-xs text-gray-600 mt-1 leading-relaxed"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+function openMediaModal(type, source, videoType, title, caption) {
+    var modal = document.getElementById('mediaModal');
+    var modalBody = document.getElementById('modalBody');
+    var modalTitle = document.getElementById('modalTitle');
+    var modalCaption = document.getElementById('modalCaption');
+
+    modalTitle.textContent = title;
+    modalCaption.textContent = caption;
+
+    if (type === 'IMAGE') {
+        modalBody.innerHTML = '<img src="' + source + '" class="max-h-[75vh] w-auto max-w-full object-contain mx-auto" />';
+    } else if (type === 'VIDEO') {
+        if (videoType === 'direct') {
+            // HTML5 native video player for directly uploaded MP4 files
+            modalBody.innerHTML = `
+                <div class="w-full bg-black">
+                    <video controls autoplay class="w-full max-h-[75vh] mx-auto">
+                        <source src="${source}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            `;
+        } else if (videoType === 'youtube') {
+            // Get current origin (e.g., http://127.0.0.1:8000)
+            var currentOrigin = window.location.origin;
+            
+            // Fixed iframe with origin and referrerpolicy
+            modalBody.innerHTML = `
+                <div class="w-full aspect-video bg-black">
+                    <iframe 
+                        class="w-full h-full" 
+                        src="https://www.youtube-nocookie.com/embed/${source}?autoplay=1&enablejsapi=1&origin=${encodeURIComponent(currentOrigin)}" 
+                        title="${title}"
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            `;
+        } else {
+            modalBody.innerHTML = '<div class="p-8 text-white text-xs text-center">Video unavailable.</div>';
+        }
+    }
+
+    modal.classList.remove('hidden');
+}
+
+function closeMediaModal() {
+    var modal = document.getElementById('mediaModal');
+    var modalBody = document.getElementById('modalBody');
+    modalBody.innerHTML = '';
+    modal.classList.add('hidden');
+}
+
+// Close when clicking outside content
+document.getElementById('mediaModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeMediaModal();
+    }
+});
+</script>
+{% endblock %}

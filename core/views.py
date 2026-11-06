@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.db.models import Q
 from .models import Announcement, Member, Student, Alumni, Book, AcademicResult, Ijtima
-from .models import AdmissionApplication
+from .models import AdmissionApplication, GalleryItem, FinancialYear
 from .forms import AdmissionApplicationForm
 from django.http import FileResponse, Http404
 from django.utils.text import slugify
@@ -14,10 +14,15 @@ def home(request):
     announcements = Announcement.objects.filter(is_active=True)[:5]
     upcoming_events = Ijtima.objects.filter(status='UPCOMING')[:3]
     recent_alumni = Alumni.objects.all()[:4]
+    
+    # Prioritize featured items, then latest items (up to 6 cards)
+    gallery_items = GalleryItem.objects.order_by('-is_featured', '-date_captured', '-created_at')[:6]
+
     context = {
         'announcements': announcements,
         'upcoming_events': upcoming_events,
         'recent_alumni': recent_alumni,
+        'gallery_items': gallery_items,
         'page_title': "Home"
     }
     return render(request, 'core/home.html', context)
@@ -218,3 +223,44 @@ def view_book_pdf(request, pk):
     response = FileResponse(book.pdf_file.open('rb'), content_type='application/pdf')
     response['Content-Disposition'] = f'inline; filename="{safe_filename}"'
     return response
+
+
+def gallery_list(request):
+    media_type = request.GET.get('type', '')
+
+    items = GalleryItem.objects.all()
+    if media_type in ['IMAGE', 'VIDEO']:
+        items = items.filter(media_type=media_type)
+
+    context = {
+        'items': items,
+        'media_type': media_type,
+        'page_title': "Campus Gallery & Media"
+    }
+    return render(request, 'core/gallery.html', context)
+
+
+def accounts_summary(request):
+    years = FinancialYear.objects.filter(is_published=True).order_by('-start_date')
+    selected_year_id = request.GET.get('year')
+
+    if selected_year_id:
+        current_year = get_object_or_404(FinancialYear, id=selected_year_id, is_published=True)
+    else:
+        current_year = years.first()
+
+    income_entries = []
+    expense_entries = []
+
+    if current_year:
+        income_entries = current_year.entries.filter(entry_type='INCOME')
+        expense_entries = current_year.entries.filter(entry_type='EXPENSE')
+
+    context = {
+        'years': years,
+        'current_year': current_year,
+        'income_entries': income_entries,
+        'expense_entries': expense_entries,
+        'page_title': "Institutional Accounts & Transparency",
+    }
+    return render(request, 'core/accounts.html', context)

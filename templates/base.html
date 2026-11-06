@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ page_title }} | Darul Uloom Sabeel Ul Rasool</title>
@@ -64,6 +65,8 @@
                     <a href="{% url 'library' %}" class="px-3 py-2 rounded-md hover:text-islamic-dark hover:bg-emerald-50 transition">Library</a>
                     <a href="{% url 'results' %}" class="px-3 py-2 rounded-md hover:text-islamic-dark hover:bg-emerald-50 transition">Results</a>
                     <a href="{% url 'ijtimat' %}" class="px-3 py-2 rounded-md hover:text-islamic-dark hover:bg-emerald-50 transition">Ijtimat</a>
+                    <a href="{% url 'gallery' %}" class="px-3 py-2 rounded-md hover:text-islamic-dark hover:bg-emerald-50 transition">Gallery</a>
+                    <a href="{% url 'accounts' %}" class="px-3 py-2 rounded-md hover:text-islamic-dark hover:bg-emerald-50 transition">Accounts</a>
                     <a href="{% url 'admission_apply' %}" class="bg-islamic-gold hover:bg-amber-600 text-islamic-dark font-bold px-3 py-1.5 rounded-lg text-xs shadow-sm transition ml-2">Online Admission</a>
                 </div>
 
@@ -86,6 +89,8 @@
             <a href="{% url 'library' %}" class="block py-2 px-3 rounded hover:bg-emerald-50 text-islamic-dark">Library</a>
             <a href="{% url 'results' %}" class="block py-2 px-3 rounded hover:bg-emerald-50 text-islamic-dark">Results</a>
             <a href="{% url 'ijtimat' %}" class="block py-2 px-3 rounded hover:bg-emerald-50 text-islamic-dark">Ijtimat</a>
+            <a href="{% url 'gallery' %}" class="block py-2 px-3 rounded hover:bg-emerald-50 text-islamic-dark">Gallery</a>
+            <a href="{% url 'accounts' %}" class="block py-2 px-3 rounded hover:bg-emerald-50 text-islamic-dark">Accounts</a>
             <a href="{% url 'admission_apply' %}" class="block py-2 px-3 rounded bg-amber-100 font-bold text-islamic-dark">Online Admission</a>
         </div>
     </nav>

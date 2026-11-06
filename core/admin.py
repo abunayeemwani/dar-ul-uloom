@@ -1,6 +1,6 @@
 from django.contrib import admin, messages
-from .models import Announcement, Member, Student, Alumni, Book, AcademicResult, ResultSubjectBreakdown, Ijtima, AdmissionApplication
-from django.utils.html import format_html
+from .models import Announcement, Member, Student, Alumni, Book, AcademicResult, ResultSubjectBreakdown, Ijtima, AdmissionApplication, GalleryItem, FinancialYear, IncomeExpenseEntry
+from django.utils.html import format_html, mark_safe
 
 
 @admin.register(Announcement)
@@ -118,3 +118,40 @@ class AdmissionApplicationAdmin(admin.ModelAdmin):
             'fields': ('interview_date', 'admin_notes')
         }),
     )
+
+
+@admin.register(GalleryItem)
+class GalleryItemAdmin(admin.ModelAdmin):
+    list_display = ('title', 'media_type', 'date_captured', 'is_featured')
+    list_filter = ('media_type', 'is_featured', 'date_captured')
+    search_fields = ('title', 'caption')
+    view_on_site = False
+
+
+class IncomeExpenseEntryInline(admin.TabularInline):
+    model = IncomeExpenseEntry
+    extra = 0
+    fields = ('entry_type', 'category', 'amount', 'head_title', 'notes')
+
+
+@admin.register(FinancialYear)
+class FinancialYearAdmin(admin.ModelAdmin):
+    list_display = (
+        'year_label',
+        'opening_balance',
+        'total_income',
+        'total_expenditure',
+        'closing_balance',
+        'has_audit_pdf',
+        'is_published',
+    )
+    list_filter = ('is_published',)
+    search_fields = ('year_label', 'remarks', 'auditor_or_accountant')
+    inlines = [IncomeExpenseEntryInline]
+    view_on_site = False
+
+    @admin.display(description="Audit PDF")
+    def has_audit_pdf(self, obj):
+        if bool(obj.audit_sheet):
+            return mark_safe('PDF Attached')
+        return mark_safe('No PDF')

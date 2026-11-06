@@ -118,4 +118,184 @@
     </div>
 </section>
 {% endif %}
+
+<!-- Campus Gallery & Media Showcase Section -->
+{% if gallery_items %}
+<section class="bg-islamic-bg/50 py-16 border-t border-gray-200">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
+            <div>
+                <span class="text-xs uppercase font-bold tracking-widest text-islamic-gold">Visual Archive</span>
+                <h2 class="text-2xl md:text-3xl font-serif font-bold text-islamic-dark mt-1">Campus Life & Gatherings</h2>
+                <p class="text-xs text-gray-500 mt-1">Glimpses of academic sessions, Tahfeez classes, and annual conferences.</p>
+            </div>
+            <a href="{% url 'gallery' %}" class="inline-flex items-center gap-1.5 text-xs font-bold text-islamic-dark bg-white border border-gray-300 hover:border-islamic-gold px-4 py-2 rounded-lg shadow-sm hover:text-islamic-gold transition">
+                <span>View Full Archive</span>
+                <span>→</span>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {% for item in gallery_items %}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col group hover:shadow-md hover:border-islamic-gold transition">
+                
+                <!-- Media Thumbnail -->
+                <div class="relative h-48 bg-gray-100 overflow-hidden cursor-pointer"
+                     onclick="openMediaModal(
+                        '{{ item.media_type }}', 
+                        '{% if item.media_type == "IMAGE" and item.image_file %}{{ item.image_file.url }}{% elif item.is_direct_video %}{{ item.video_file.url }}{% elif item.youtube_embed_id %}{{ item.youtube_embed_id }}{% endif %}', 
+                        '{% if item.is_direct_video %}direct{% elif item.youtube_embed_id %}youtube{% else %}none{% endif %}', 
+                        '{{ item.title|escapejs }}', 
+                        '{{ item.caption|escapejs }}'
+                     )">
+                    
+                    {% if item.media_type == 'IMAGE' %}
+                        {% if item.image_file %}
+                            <img src="{{ item.image_file.url }}" alt="{{ item.title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        {% else %}
+                            <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">No image</div>
+                        {% endif %}
+                        <span class="absolute top-2 right-2 bg-islamic-dark/80 text-white text-[10px] font-bold px-2 py-0.5 rounded backdrop-blur">
+                            📷 Photo
+                        </span>
+                    {% elif item.media_type == 'VIDEO' %}
+                        {% if item.thumbnail %}
+                            <img src="{{ item.thumbnail.url }}" alt="{{ item.title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        {% elif item.youtube_embed_id %}
+                            <img src="https://img.youtube.com/vi/{{ item.youtube_embed_id }}/hqdefault.jpg" alt="{{ item.title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        {% else %}
+                            <div class="w-full h-full bg-slate-900 flex flex-col items-center justify-center text-white text-xs">
+                                <span>▶ Video Clip</span>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/40 transition">
+                            <div class="w-11 h-11 rounded-full bg-white/95 text-islamic-dark flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+                                <svg class="w-5 h-5 ml-0.5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                        </div>
+                        <span class="absolute top-2 right-2 bg-islamic-dark text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">
+                            {% if item.is_direct_video %}MP4 Video{% else %}YouTube{% endif %}
+                        </span>
+                    {% endif %}
+
+                    {% if item.category %}
+                    <span class="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] font-medium px-2 py-0.5 rounded backdrop-blur">
+                        {{ item.category.name }}
+                    </span>
+                    {% endif %}
+                </div>
+
+                <!-- Content -->
+                <div class="p-4 flex-grow flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-sm text-islamic-dark mb-1 line-clamp-1">{{ item.title }}</h3>
+                        {% if item.caption %}
+                        <p class="text-xs text-gray-500 line-clamp-2 leading-relaxed mb-2">{{ item.caption }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="pt-2 border-t border-gray-100 flex justify-between items-center text-[11px] text-gray-400">
+                        <span>{{ item.date_captured|date:"M d, Y" }}</span>
+                        <button type="button" 
+                                class="text-islamic-dark font-semibold hover:text-islamic-gold transition"
+                                onclick="openMediaModal(
+                                    '{{ item.media_type }}', 
+                                    '{% if item.media_type == "IMAGE" and item.image_file %}{{ item.image_file.url }}{% elif item.is_direct_video %}{{ item.video_file.url }}{% elif item.youtube_embed_id %}{{ item.youtube_embed_id }}{% endif %}', 
+                                    '{% if item.is_direct_video %}direct{% elif item.youtube_embed_id %}youtube{% else %}none{% endif %}', 
+                                    '{{ item.title|escapejs }}', 
+                                    '{{ item.caption|escapejs }}'
+                                )">
+                            View
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Lightbox Modal Player -->
+<div id="mediaModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl relative">
+        <button onclick="closeMediaModal()" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center transition">
+            ✕
+        </button>
+        <div id="modalBody" class="w-full bg-black flex items-center justify-center min-h-[300px]">
+            <!-- Dynamic Content Injected via JS -->
+        </div>
+        <div class="p-5 bg-white">
+            <h3 id="modalTitle" class="font-serif font-bold text-lg text-islamic-dark"></h3>
+            <p id="modalCaption" class="text-xs text-gray-600 mt-1 leading-relaxed"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+function openMediaModal(type, source, videoType, title, caption) {
+    var modal = document.getElementById('mediaModal');
+    var modalBody = document.getElementById('modalBody');
+    var modalTitle = document.getElementById('modalTitle');
+    var modalCaption = document.getElementById('modalCaption');
+
+    modalTitle.textContent = title || '';
+    modalCaption.textContent = caption || '';
+
+    if (!videoType || videoType === 'none') {
+        if (source && (source.startsWith('/') || source.endsWith('.mp4') || source.endsWith('.webm'))) {
+            videoType = 'direct';
+        } else if (source && source.length === 11) {
+            videoType = 'youtube';
+        }
+    }
+
+    if (type === 'IMAGE') {
+        modalBody.innerHTML = '<img src="' + source + '" class="max-h-[75vh] w-auto max-w-full object-contain mx-auto" />';
+    } else if (type === 'VIDEO') {
+        if (videoType === 'direct') {
+            modalBody.innerHTML = `
+                <div class="w-full bg-black">
+                    <video controls autoplay class="w-full max-h-[75vh] mx-auto">
+                        <source src="${source}" type="video/mp4">
+                        Your browser does not support HTML5 video.
+                    </video>
+                </div>
+            `;
+        } else if (videoType === 'youtube') {
+            var currentOrigin = window.location.origin;
+            modalBody.innerHTML = `
+                <div class="w-full aspect-video bg-black">
+                    <iframe 
+                        class="w-full h-full" 
+                        src="https://www.youtube-nocookie.com/embed/${source}?autoplay=1&enablejsapi=1&origin=${encodeURIComponent(currentOrigin)}" 
+                        title="${title}"
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            `;
+        } else {
+            modalBody.innerHTML = '<div class="p-8 text-white text-xs text-center">Video format could not be played.</div>';
+        }
+    }
+
+    modal.classList.remove('hidden');
+}
+
+function closeMediaModal() {
+    var modal = document.getElementById('mediaModal');
+    var modalBody = document.getElementById('modalBody');
+    modalBody.innerHTML = '';
+    modal.classList.add('hidden');
+}
+
+document.getElementById('mediaModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeMediaModal();
+    }
+});
+</script>
+{% endif %}
 {% endblock %}

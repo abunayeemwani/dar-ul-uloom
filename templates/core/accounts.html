@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Header Banner -->
+<div class="bg-islamic-dark text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <span class="arabic-text text-xl text-islamic-gold block mb-1">بَيْتُ الْمَالِ وَالْمُحَاسَبَةُ المَالِيَّةُ</span>
+        <h1 class="font-serif text-3xl md:text-4xl font-bold mb-2">Institutional Accounts & Financial Statements</h1>
+        <p class="text-xs md:text-sm text-emerald-100 max-w-2xl mx-auto">
+            Annual audited balance sheets, community contributions, and institutional expenditures of Darul Uloom Sabeel Ul Rasool, Achagoza.
+        </p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+    
+    <!-- Year Selector & PDF Download Action Bar -->
+    <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div class="flex items-center gap-3 w-full md:w-auto">
+            <label for="year_select" class="text-xs font-bold text-gray-700 whitespace-nowrap">Financial Session:</label>
+            <select id="year_select" 
+                    onchange="if (this.value) window.location.href='?year=' + this.value;" 
+                    class="bg-gray-50 border border-gray-300 text-islamic-dark font-semibold text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-islamic-dark w-full md:w-64">
+                {% for y in years %}
+                <option value="{{ y.id }}" {% if current_year and current_year.id == y.id %}selected{% endif %}>
+                    {{ y.year_label }}
+                </option>
+                {% empty %}
+                <option>No financial years published</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        {% if current_year and current_year.audit_sheet %}
+        <div class="flex items-center gap-2 w-full md:w-auto">
+            <!-- Open in new tab -->
+            <a href="{{ current_year.audit_sheet.url }}" target="_blank" rel="noopener noreferrer" class="w-full md:w-auto inline-flex items-center justify-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold px-3.5 py-2.5 rounded-xl border border-gray-300 transition">
+                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                <span>Read PDF</span>
+            </a>
+
+            <!-- Direct Download -->
+            <a href="{{ current_year.audit_sheet.url }}" download class="w-full md:w-auto inline-flex items-center justify-center gap-1.5 bg-islamic-dark hover:bg-islamic-emerald text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm transition">
+                <svg class="w-4 h-4 text-islamic-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <span>Download PDF Statement</span>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if current_year %}
+    <!-- 4 Main Financial Balance Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+        
+        <!-- 1. Previous Year Balance -->
+        <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm relative overflow-hidden">
+            <div class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Previous Year Balance</div>
+            <div class="font-serif font-bold text-2xl text-gray-800">₹{{ current_year.opening_balance|floatformat:2 }}</div>
+            <p class="text-[11px] text-gray-400 mt-2">Carried forward from previous fiscal term</p>
+            <div class="absolute -right-2 -bottom-2 w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-200 pointer-events-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+        </div>
+
+        <!-- 2. Total Annual Income -->
+        <div class="bg-white p-6 rounded-2xl border border-emerald-200 shadow-sm relative overflow-hidden">
+            <div class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider mb-1">Total Income (Aamadani)</div>
+            <div class="font-serif font-bold text-2xl text-emerald-700">₹{{ current_year.total_income|floatformat:2 }}</div>
+            <p class="text-[11px] text-emerald-600/80 mt-2">Zakat, donations & building funds</p>
+            <div class="absolute -right-2 -bottom-2 w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-200 pointer-events-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path></svg>
+            </div>
+        </div>
+
+        <!-- 3. Total Annual Expenditure -->
+        <div class="bg-white p-6 rounded-2xl border border-rose-200 shadow-sm relative overflow-hidden">
+            <div class="text-[11px] font-bold text-rose-800 uppercase tracking-wider mb-1">Total Expenditure (Kharch)</div>
+            <div class="font-serif font-bold text-2xl text-rose-700">₹{{ current_year.total_expenditure|floatformat:2 }}</div>
+            <p class="text-[11px] text-rose-600/80 mt-2">Matbakh, salaries & hostel maintenance</p>
+            <div class="absolute -right-2 -bottom-2 w-16 h-16 bg-rose-50 rounded-full flex items-center justify-center text-rose-200 pointer-events-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"></path></svg>
+            </div>
+        </div>
+
+        <!-- 4. Current Net Balance -->
+        <div class="bg-white p-6 rounded-2xl border-2 border-islamic-gold shadow-sm relative overflow-hidden">
+            <div class="text-[11px] font-bold text-islamic-dark uppercase tracking-wider mb-1">Current Balance (Baqaya)</div>
+            <div class="font-serif font-bold text-2xl {% if current_year.closing_balance >= 0 %}text-islamic-dark{% else %}text-red-600{% endif %}">
+                ₹{{ current_year.closing_balance|floatformat:2 }}
+            </div>
+            <p class="text-[11px] text-islamic-gold font-medium mt-2">Closing balance at end of fiscal term</p>
+            <div class="absolute -right-2 -bottom-2 w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center text-islamic-gold/30 pointer-events-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Detailed Ledger Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- Income Breakdown Table -->
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
+            <div class="bg-emerald-50/70 p-4 border-b border-emerald-100 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+                    <h2 class="font-serif font-bold text-base text-islamic-dark">Income Head Breakdowns</h2>
+                </div>
+                <span class="text-xs font-bold text-emerald-800">Total: ₹{{ current_year.total_income|floatformat:2 }}</span>
+            </div>
+            
+            <div class="overflow-x-auto flex-grow">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-gray-50 text-gray-600 font-semibold border-b border-gray-100">
+                        <tr>
+                            <th class="p-3">Category / Head</th>
+                            <th class="p-3">Title / Description</th>
+                            <th class="p-3 text-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for entry in income_entries %}
+                        <tr class="hover:bg-emerald-50/20">
+                            <td class="p-3 font-semibold text-gray-700">{{ entry.get_category_display }}</td>
+                            <td class="p-3 text-gray-600">{{ entry.head_title }}</td>
+                            <td class="p-3 text-right font-mono font-bold text-emerald-700">₹{{ entry.amount|floatformat:2 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="p-6 text-center text-gray-400">Detailed itemized entries not uploaded for this year. Refer to the attached statement sheet above.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Expenditure Breakdown Table -->
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
+            <div class="bg-rose-50/70 p-4 border-b border-rose-100 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span>
+                    <h2 class="font-serif font-bold text-base text-islamic-dark">Expenditure Head Breakdowns</h2>
+                </div>
+                <span class="text-xs font-bold text-rose-800">Total: ₹{{ current_year.total_expenditure|floatformat:2 }}</span>
+            </div>
+            
+            <div class="overflow-x-auto flex-grow">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-gray-50 text-gray-600 font-semibold border-b border-gray-100">
+                        <tr>
+                            <th class="p-3">Category / Head</th>
+                            <th class="p-3">Title / Description</th>
+                            <th class="p-3 text-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for entry in expense_entries %}
+                        <tr class="hover:bg-rose-50/20">
+                            <td class="p-3 font-semibold text-gray-700">{{ entry.get_category_display }}</td>
+                            <td class="p-3 text-gray-600">{{ entry.head_title }}</td>
+                            <td class="p-3 text-right font-mono font-bold text-rose-700">₹{{ entry.amount|floatformat:2 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="p-6 text-center text-gray-400">Detailed itemized entries not uploaded for this year. Refer to the attached statement sheet above.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Audit Certification & Remarks Note -->
+    <div class="mt-8 bg-amber-50/60 border border-amber-200 rounded-xl p-5 text-xs text-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <span class="font-bold text-islamic-dark">Audit & Verification Note:</span>
+            <p class="mt-0.5 text-gray-600">Accounts verified and certified by <strong>{{ current_year.auditor_or_accountant }}</strong>.</p>
+            {% if current_year.remarks %}
+            <p class="italic text-gray-500 mt-1">"{{ current_year.remarks }}"</p>
+            {% endif %}
+        </div>
+        <div class="text-left sm:text-right text-[11px] text-gray-500 whitespace-nowrap">
+            Audit Term: {{ current_year.start_date|date:"d M Y" }} — {{ current_year.end_date|date:"d M Y" }}
+        </div>
+    </div>
+
+    {% else %}
+    <div class="bg-white rounded-2xl border border-gray-200 p-12 text-center text-sm text-gray-500">
+        No accounts statements published yet. Please configure the financial session in the administrative console.
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

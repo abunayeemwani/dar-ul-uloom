@@ -17,4 +17,6 @@ urlpatterns = [
     path('admissions/status/', views.admission_status, name='admission_status'),
     path('library/<int:pk>/download/', views.download_book_pdf, name='book_download'),
     path('library/<int:pk>/read/', views.view_book_pdf, name='book_read'),
+    path('gallery/', views.gallery_list, name='gallery'),
+    path('accounts/', views.accounts_summary, name='accounts'),
 ]
