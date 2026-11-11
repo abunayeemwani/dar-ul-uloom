@@ -35,11 +35,19 @@ class Member(models.Model):
         ('STAFF', 'Support Staff'),
     ]
     name = models.CharField(max_length=150)
-    designation = models.CharField(max_length=150)
+    parentage = models.CharField(max_length=150, blank=True, verbose_name="Parentage / Father's Name")
+    aadhaar_number = models.CharField(max_length=12, blank=True, verbose_name="Aadhaar / National ID")
+    address = models.TextField(blank=True, verbose_name="Residential Address")
+    
+    designation = models.CharField(max_length=150, blank=True)
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='FACULTY')
     contact_phone = models.CharField(max_length=20, blank=True, help_text="Will only be shown if authorized")
     contact_email = models.EmailField(blank=True)
     photo = models.ImageField(upload_to='members/', blank=True, null=True)
+    bio = models.TextField(blank=True, verbose_name="Short Biography / Academic Services")
+
+    class Meta:
+        ordering = ['name']
 
     def __str__(self):
         return f"{self.name} - {self.designation}"
@@ -57,6 +65,11 @@ class Student(models.Model):
     registration_no = models.CharField(max_length=30, unique=True)
     name = models.CharField(max_length=150)
     parentage = models.CharField(max_length=150, verbose_name="Father's / Guardian's Name")
+    dob = models.DateField(null=True, blank=True, verbose_name="Date of Birth")
+    phone_number = models.CharField(max_length=20, blank=True, verbose_name="Contact / Guardian Phone")
+    aadhaar_number = models.CharField(max_length=12, blank=True, verbose_name="Aadhaar / National ID")
+    address = models.TextField(blank=True, verbose_name="Residential Address")
+    
     current_class = models.CharField(max_length=20, choices=CLASS_CHOICES)
     admission_year = models.PositiveIntegerField(default=2024)
     district = models.CharField(max_length=100, default='Pulwama')
@@ -67,14 +80,20 @@ class Student(models.Model):
         ordering = ['registration_no']
 
     def __str__(self):
-        return f"{self.registration_no} - {self.name}"
+        return f"{self.registration_no} - {self.name} ({self.get_current_class_display()})"
 
 
 class Alumni(models.Model):
     name = models.CharField(max_length=150)
+    parentage = models.CharField(max_length=150, blank=True, verbose_name="Father's Name")
+    dob = models.DateField(null=True, blank=True, verbose_name="Date of Birth")
+    phone_number = models.CharField(max_length=20, blank=True, verbose_name="Phone Number")
+    aadhaar_number = models.CharField(max_length=12, blank=True, verbose_name="Aadhaar / National ID")
+    address = models.TextField(blank=True, verbose_name="Residential Address")
+    
     completion_year = models.PositiveIntegerField()
-    qualification_attained = models.CharField(max_length=200, help_text="e.g. Hafiz-ul-Quran, Fazil-e-Dars-e-Nizami")
-    current_engagement = models.CharField(max_length=250, help_text="e.g. Imam & Khateeb, Teacher, Higher Studies")
+    qualification_attained = models.CharField(max_length=200, blank=True, help_text="e.g. Hafiz-ul-Quran, Fazil-e-Dars-e-Nizami")
+    current_engagement = models.CharField(max_length=250, blank=True, help_text="e.g. Imam & Khateeb, Teacher, Higher Studies")
     native_place = models.CharField(max_length=150, default='Jammu & Kashmir')
     photo = models.ImageField(upload_to='alumni/', blank=True, null=True)
 
@@ -242,7 +261,8 @@ class AdmissionApplication(models.Model):
     residential_address = models.TextField(verbose_name="Village / Mohalla / House Details")
     district = models.CharField(max_length=100, default="Pulwama")
     state = models.CharField(max_length=100, default="Jammu & Kashmir")
-    pincode = models.CharField(max_length=10, default="192302")
+    pincode = models.CharField(max_length=10, default="192302", blank=True)
+    aadhaar_number = models.CharField(max_length=16, blank=True)
 
     # Supporting Documents (Optional during initial online form)
     student_photo = models.ImageField(upload_to='admissions/photos/', blank=True, null=True)

@@ -12,23 +12,34 @@ class AnnouncementAdmin(admin.ModelAdmin):
 
 @admin.register(Member)
 class MemberAdmin(admin.ModelAdmin):
-    list_display = ('name', 'designation', 'category')
+    list_display = ('name', 'designation', 'category', 'parentage')
     list_filter = ('category',)
-    search_fields = ('name', 'designation', 'qualification')
+    search_fields = ('name', 'parentage', 'designation', 'aadhaar_number')
+    fieldsets = (
+        ('Personal Biodata', {
+            'fields': ('name', 'parentage', 'dob' if hasattr(Member, 'dob') else (), 'aadhaar_number', 'address', 'photo')
+        }),
+        ('Institutional Standing', {
+            'fields': ('category', 'designation', 'bio')
+        }),
+        ('Contact Disclosure', {
+            'fields': ('contact_phone', 'contact_email')
+        }),
+    )
 
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('registration_no', 'name', 'parentage', 'current_class', 'admission_year', 'is_active')
-    list_filter = ('current_class', 'admission_year', 'is_active')
-    search_fields = ('registration_no', 'name', 'parentage')
+    list_display = ('registration_no', 'name', 'parentage', 'current_class', 'admission_year', 'dob', 'phone_number', 'is_active')
+    list_filter = ('current_class', 'admission_year', 'district', 'is_active')
+    search_fields = ('registration_no', 'name', 'parentage', 'aadhaar_number', 'phone_number')
 
 
 @admin.register(Alumni)
 class AlumniAdmin(admin.ModelAdmin):
-    list_display = ('name', 'completion_year', 'qualification_attained', 'current_engagement', 'native_place')
-    list_filter = ('completion_year',)
-    search_fields = ('name', 'qualification_attained', 'current_engagement')
+    list_display = ('name', 'parentage', 'completion_year', 'qualification_attained', 'current_engagement', 'phone_number')
+    list_filter = ('completion_year', 'native_place')
+    search_fields = ('name', 'parentage', 'qualification_attained', 'current_engagement', 'aadhaar_number', 'phone_number')
 
 
 @admin.register(Book)
@@ -98,6 +109,7 @@ class AdmissionApplicationAdmin(admin.ModelAdmin):
         'status',
         'interview_date',
         'application_date',
+        'aadhaar_number',
     )
     list_filter = ('status', 'preferred_course', 'residence_type', 'district')
     search_fields = ('reference_id', 'student_name', 'father_name', 'guardian_contact')
@@ -109,7 +121,7 @@ class AdmissionApplicationAdmin(admin.ModelAdmin):
             'fields': ('reference_id', 'status', 'application_date', 'preferred_course', 'residence_type')
         }),
         ('Candidate Biodata', {
-            'fields': ('student_name', 'dob', 'previous_madrasa_or_school', 'last_class_passed', 'student_photo', 'aadhaar')
+            'fields': ('student_name', 'dob', 'previous_madrasa_or_school', 'last_class_passed', 'student_photo', 'aadhaar_number', 'aadhaar')
         }),
         ('Family & Guardian Information', {
             'fields': ('father_name', 'guardian_contact', 'email', 'residential_address', 'district', 'state', 'pincode')

@@ -2,7 +2,7 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="islamic-pattern text-white py-20 px-4 relative overflow-hidden">
+<!-- <section class="islamic-pattern text-white py-20 px-4 relative overflow-hidden">
     <div class="max-w-5xl mx-auto text-center relative z-10">
         <p class="arabic-text text-2xl md:text-3xl text-islamic-gold mb-3">مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ</p>
         <h1 class="text-3xl md:text-5xl font-serif font-extrabold tracking-tight text-white mb-4">
@@ -19,17 +19,97 @@
             <a href="{% url 'admission_apply' %}" class="bg-white/10 hover:bg-white/20 text-white font-medium px-6 py-3 rounded-lg border border-white/20 transition">Online Admission</a>
         </div>
     </div>
+</section> -->
+
+{% load static %}
+
+<!-- Hero Section with Background Image & Blur Overlay -->
+<section class="relative min-h-[580px] lg:min-h-[640px] flex items-center justify-center overflow-hidden">
+    
+    <!-- 1. Blurred Background Image Layer -->
+    <div class="absolute inset-0 z-0">
+        <img 
+            src="{% static 'images/hero-campus.jpg' %}" 
+            alt="Darul Uloom Sabeel Ul Rasool Campus" 
+            class="w-full h-full object-cover scale-110 filter blur-[0.1px] contrast-105"
+            onerror="this.src='https://images.unsplash.com/photo-1542816417-0983c9c9ad53?auto=format&fit=crop&w=1920&q=80';"
+        />
+        <!-- Scale-110 ensures the blurred edges don't bleed white borders onto the container -->
+    </div>
+
+    <!-- 2. Dual Deep Islamic Green & Vignette Gradient Overlays -->
+    <div class="absolute inset-0 z-[1] bg-gradient-to-b from-islamic-dark/90 via-islamic-dark/80 to-islamic-dark/95"></div>
+    <div class="absolute inset-0 z-[1] bg-radial-gradient from-transparent via-black/30 to-black/60"></div>
+
+    <!-- 3. Foreground Content (Sharp & Readable) -->
+    <div class="relative z-10 max-w-5xl mx-auto px-4 py-20 text-center">
+        
+        <!-- Bismillah / Quranic Ayah Badge -->
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-islamic-gold/40 text-islamic-gold mb-6 shadow-sm">
+            <span class="arabic-text text-lg md:text-xl font-semibold tracking-wide">
+                مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ
+            </span>
+        </div>
+
+        <!-- Institution Name -->
+        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-serif font-extrabold text-white tracking-tight drop-shadow-md mb-4 leading-tight">
+            Darul Uloom Sabeel Ul Rasool
+        </h1>
+        
+        <!-- Location Subtitle -->
+        <p class="text-base sm:text-xl text-emerald-100/90 font-light max-w-2xl mx-auto mb-3 tracking-wide">
+            Achagoza, Pulwama, Jammu & Kashmir
+        </p>
+
+        <!-- Educational Motto -->
+        <p class="text-xs sm:text-sm md:text-base text-amber-200/90 italic mb-8 max-w-xl mx-auto leading-relaxed drop-shadow">
+            "Fostering Quranic scholarship, preservation of prophetic traditions, and virtuous character in the valley."
+        </p>
+
+        <!-- Call-to-Action Buttons with Glassmorphism -->
+        <div class="flex flex-wrap items-center justify-center gap-4">
+            <a href="{% url 'admission_apply' %}" class="bg-islamic-gold hover:bg-amber-600 text-islamic-dark font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
+                Online Admission 1446-47 AH
+            </a>
+            <a href="{% url 'results' %}" class="bg-white/15 hover:bg-white/25 text-white font-medium text-xs sm:text-sm px-6 py-3 rounded-xl backdrop-blur-md border border-white/20 transition-all">
+                Examination Results
+            </a>
+            <a href="{% url 'about' %}" class="text-emerald-100 hover:text-white text-xs sm:text-sm font-semibold px-4 py-3 underline underline-offset-4 decoration-islamic-gold/60 transition">
+                About the Institution →
+            </a>
+        </div>
+    </div>
+
+    <!-- Subtle Bottom Islamic Arch Divider -->
+    <div class="absolute bottom-0 inset-x-0 z-10 h-6 bg-gradient-to-t from-islamic-bg to-transparent"></div>
 </section>
 
 <!-- Notice Board Ticker -->
 {% if announcements %}
-<section class="bg-amber-50 border-b border-amber-200 py-3">
+<section class="bg-amber-50 border-b border-amber-200 py-3 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 flex items-center gap-3">
-        <span class="bg-islamic-dark text-white text-xs uppercase px-2.5 py-1 rounded font-semibold tracking-wider flex-shrink-0">Updates</span>
-        <div class="text-sm text-islamic-charcoal truncate">
-            {% for a in announcements %}
-                <span class="mr-6">📌 <strong>{{ a.title }}</strong> ({{ a.date_posted|date:"M d, Y" }}) - {{ a.content|truncatechars:70 }}</span>
-            {% endfor %}
+        <!-- Static Label Badge -->
+        <span class="bg-islamic-dark text-white text-xs uppercase px-2.5 py-1 rounded font-semibold tracking-wider flex-shrink-0 z-10 shadow-xs">
+            Updates
+        </span>
+
+        <!-- Marquee Viewport -->
+        <div class="marquee-track flex-1 overflow-hidden relative select-none">
+            <div class="marquee-content inline-flex whitespace-nowrap text-sm text-islamic-charcoal">
+                <!-- Primary Announcement Stream -->
+                {% for a in announcements %}
+                    <span class="inline-flex items-center mr-8">
+                        📌 <strong class="ml-1 text-islamic-dark">{{ a.title }}</strong>&nbsp;({{ a.date_posted|date:"M d, Y" }})&nbsp;—&nbsp;{{ a.content }}
+                    </span>
+                {% endfor %}
+
+                <!-- Duplicate Loop for Seamless Infinite Cycling -->
+                {% for a in announcements %}
+                    <span class="inline-flex items-center mr-8" aria-hidden="true">
+                        📌 <strong class="ml-1 text-islamic-dark">{{ a.title }}</strong>&nbsp;({{ a.date_posted|date:"M d, Y" }})&nbsp;—&nbsp;{{ a.content|truncatechars:70 }}
+                    </span>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </section>

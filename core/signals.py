@@ -65,6 +65,10 @@ def create_student_on_acceptance(sender, instance, created, **kwargs):
                     registration_no=reg_no,
                     name=instance.student_name,
                     parentage=instance.father_name,
+                    dob=instance.dob,
+                    phone_number=instance.guardian_contact,
+                    aadhaar_number=instance.aadhaar_number,  # Can be manually verified or linked
+                    address=instance.residential_address,
                     current_class=target_class,
                     admission_year=current_year,
                     district=instance.district or 'Pulwama',

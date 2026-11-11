@@ -31,3 +31,25 @@ body {
     border-top-left-radius: 4rem;
     border-top-right-radius: 4rem;
 }
+
+/* Continuous Left Movement */
+@keyframes ticker-move-left {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.marquee-content {
+    display: inline-flex;
+    will-change: transform;
+    /* Adjust duration (25s) to make it faster or slower */
+    animation: ticker-move-left 25s linear infinite;
+}
+
+/* Pause the scrolling when mouse hovers over the track */
+.marquee-track:hover .marquee-content {
+    animation-play-state: paused;
+}

@@ -19,4 +19,7 @@ urlpatterns = [
     path('library/<int:pk>/read/', views.view_book_pdf, name='book_read'),
     path('gallery/', views.gallery_list, name='gallery'),
     path('accounts/', views.accounts_summary, name='accounts'),
+    path('members/<int:pk>/', views.member_detail, name='member_detail'),
+    path('students/<int:pk>/', views.student_detail, name='student_detail'),
+    path('alumni/<int:pk>/', views.alumni_detail, name='alumni_detail'),
 ]

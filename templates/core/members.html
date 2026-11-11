@@ -49,11 +49,14 @@
                     {% if member.qualification %}<p class="text-xs text-gray-600 italic">Sanad: {{ member.qualification }}</p>{% endif %}
                 </div>
                 <div class="pt-3 mt-3 border-t border-gray-100 text-[11px] text-gray-500">
-                    {% if member.is_contact_public and member.contact_phone %}
+                    {% if member.contact_phone %}
                         <p>📞 {{ member.contact_phone }}</p>
                     {% else %}
                         <p class="italic text-gray-400">Institutional Contact: via Office</p>
                     {% endif %}
+                    <a href="{% url 'member_detail' member.id %}" class="mt-2 inline-block text-xs font-bold text-islamic-dark hover:text-islamic-gold">
+                        View Full Profile →
+                    </a>
                 </div>
             </div>
         </div>

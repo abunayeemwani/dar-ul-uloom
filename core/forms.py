@@ -6,7 +6,7 @@ class AdmissionApplicationForm(forms.ModelForm):
         model = AdmissionApplication
         fields = [
             'student_name', 'dob', 'preferred_course', 'residence_type',
-            'previous_madrasa_or_school', 'last_class_passed',
+            'previous_madrasa_or_school', 'last_class_passed', 'aadhaar_number',
             'father_name', 'guardian_contact', 'email',
             'residential_address', 'district', 'state', 'pincode',
             'student_photo', 'aadhaar'
@@ -18,6 +18,7 @@ class AdmissionApplicationForm(forms.ModelForm):
             'residence_type': forms.Select(attrs={'class': 'w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-islamic-dark bg-white'}),
             'previous_madrasa_or_school': forms.TextInput(attrs={'placeholder': 'Previous school or Maktab name', 'class': 'w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-islamic-dark'}),
             'last_class_passed': forms.TextInput(attrs={'placeholder': 'e.g. 5th Standard, Nazra Quran, or 5 Paras', 'class': 'w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-islamic-dark'}),
+            'aadhaar_number': forms.TextInput(attrs={'placeholder': 'e.g. 123456789123', 'class': 'w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-islamic-dark'}),
             'father_name': forms.TextInput(attrs={'placeholder': 'Father or legal guardian name', 'class': 'w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-islamic-dark'}),
             'guardian_contact': forms.TextInput(attrs={'placeholder': '10-digit mobile number', 'class': 'w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-islamic-dark'}),
             'email': forms.EmailInput(attrs={'placeholder': 'Optional email address', 'class': 'w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-islamic-dark'}),

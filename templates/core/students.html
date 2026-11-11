@@ -43,7 +43,11 @@
                     {% for student in students %}
                     <tr class="hover:bg-amber-50/40">
                         <td class="p-3.5 font-mono font-bold text-islamic-dark">{{ student.registration_no }}</td>
-                        <td class="p-3.5 font-medium text-gray-900">{{ student.name }}</td>
+                        <td class="p-3.5 font-medium text-gray-900">
+                            <a href="{% url 'student_detail' student.id %}" class="hover:text-islamic-dark hover:underline font-semibold">
+                                {{ student.name }}
+                            </a>
+                        </td>
                         <td class="p-3.5 text-gray-600">{{ student.parentage }}</td>
                         <td class="p-3.5"><span class="bg-emerald-100 text-islamic-dark px-2 py-0.5 rounded font-medium">{{ student.get_current_class_display }}</span></td>
                         <td class="p-3.5 text-gray-600">{{ student.admission_year }}</td>

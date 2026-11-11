@@ -8,6 +8,32 @@ from .forms import AdmissionApplicationForm
 from django.http import FileResponse, Http404
 from django.utils.text import slugify
 from .models import Book
+from django.contrib.auth.decorators import login_required
+
+
+def member_detail(request, pk):
+    member = get_object_or_404(Member, pk=pk)
+    return render(request, 'core/member_detail.html', {
+        'member': member,
+        'page_title': f"{member.name} - Profile"
+    })
+
+
+@login_required
+def student_detail(request, pk):
+    student = get_object_or_404(Student.objects.prefetch_related('results'), pk=pk)
+    return render(request, 'core/student_detail.html', {
+        'student': student,
+        'page_title': f"{student.name} ({student.registration_no})"
+    })
+
+
+def alumni_detail(request, pk):
+    alumnus = get_object_or_404(Alumni, pk=pk)
+    return render(request, 'core/alumni_detail.html', {
+        'alumnus': alumnus,
+        'page_title': f"{alumnus.name} - Alumni Profile"
+    })
 
 
 def home(request):
@@ -52,6 +78,7 @@ def members_list(request):
     return render(request, 'core/members.html', context)
 
 
+@login_required
 def students_list(request):
     selected_class = request.GET.get('class', '')
     query = request.GET.get('q', '')

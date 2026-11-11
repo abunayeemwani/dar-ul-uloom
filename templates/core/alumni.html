@@ -34,6 +34,9 @@
                 <p class="text-xs font-semibold text-islamic-gold">{{ a.qualification_attained }} (Class of {{ a.completion_year }})</p>
                 <p class="text-xs text-gray-600 mt-1">Current: {{ a.current_engagement }}</p>
                 <p class="text-[11px] text-gray-400">Native: {{ a.native_place }}</p>
+                <a href="{% url 'alumni_detail' a.id %}" class="text-xs font-semibold text-islamic-dark hover:text-islamic-gold">
+                    View Details →
+                </a>
             </div>
         </div>
         {% empty %}
